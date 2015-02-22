@@ -13,33 +13,35 @@ import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 
 public class LanguageDetectorFactory {
-	
-	static {
-		try {
-			DetectorFactory.loadProfile(getProfiles());
-		} catch (LangDetectException | IOException e) {
-			throw new IOError(e);
-		}
-	}
-	
-	public static Detector create() throws LangDetectException {
-		return DetectorFactory.create();
-	}
-	
-	private static List<String> getProfiles() throws IOException {
-		BufferedReader r = null;
-		try {
-			final InputStream stream = LanguageDetectorFactory.class.getClassLoader().getResourceAsStream("net/crsr/ashurbanipal/language/profiles/combined-profiles");
-			r = new BufferedReader(new InputStreamReader(stream));
-			final List<String> result = new ArrayList<String>();
-			String line = r.readLine();
-			while (line != null) {
-				result.add(line);
-				line = r.readLine();
-			}
-			return result;
-		} finally {
-			if (r != null) { r.close(); }
-		}
-	}
+
+  static {
+    try {
+      DetectorFactory.loadProfile(getProfiles());
+    } catch (LangDetectException | IOException e) {
+      throw new IOError(e);
+    }
+  }
+
+  public static Detector create() throws LangDetectException {
+    return DetectorFactory.create();
+  }
+
+  private static List<String> getProfiles() throws IOException {
+    BufferedReader r = null;
+    try {
+      final InputStream stream = LanguageDetectorFactory.class.getClassLoader().getResourceAsStream("net/crsr/ashurbanipal/language/profiles/combined-profiles");
+      r = new BufferedReader(new InputStreamReader(stream));
+      final List<String> result = new ArrayList<String>();
+      String line = r.readLine();
+      while (line != null) {
+        result.add(line);
+        line = r.readLine();
+      }
+      return result;
+    } finally {
+      if (r != null) {
+        r.close();
+      }
+    }
+  }
 }
