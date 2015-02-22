@@ -2,7 +2,6 @@ package net.crsr.ashurbanipal.store;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -101,44 +100,22 @@ public class FormatStore extends AbstractFileStore implements Map<Integer,List<P
 
   @Override
   public List<Pair<String,String>> put(Integer key, List<Pair<String,String>> value) {
-    try {
-      final List<Pair<String,String>> result = formatsTable.put(key, value);
-      this.write();
-      return result;
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    return formatsTable.put(key, value);
   }
 
   @Override
   public List<Pair<String,String>> remove(Object key) {
-    try {
-      final List<Pair<String,String>> result = formatsTable.remove(key);
-      this.write();
-      return result;
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    return formatsTable.remove(key);
   }
 
   @Override
   public void putAll(Map<? extends Integer,? extends List<Pair<String,String>>> m) {
-    try {
-      formatsTable.putAll(m);
-      this.write();
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    formatsTable.putAll(m);
   }
 
   @Override
   public void clear() {
-    try {
-      formatsTable.clear();
-      this.write();
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    formatsTable.clear();
   }
 
   @Override

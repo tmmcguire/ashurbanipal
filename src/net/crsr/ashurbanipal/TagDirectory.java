@@ -48,6 +48,7 @@ public class TagDirectory {
           }
           final String filename = result.a.startsWith(directory) ? result.a.substring(directory.length()) : result.a;
           posStore.put(filename, result.b);
+          posStore.write();
           final Map<String,Integer> nouns = new HashMap<>();
           final Map<String,Integer> verbs = new HashMap<>();
           for (Entry<String,Map<String,Integer>> entry : result.c.entrySet()) {
@@ -57,8 +58,8 @@ public class TagDirectory {
               updateWordCounts(verbs, entry.getValue());
             }
           }
-          nounStore.put(filename, nouns);
-          verbStore.put(filename, verbs);
+          nounStore.append(filename, nouns);
+          verbStore.append(filename, verbs);
         } catch (CancellationException | ExecutionException | InterruptedException e) {
           e.printStackTrace();
         }

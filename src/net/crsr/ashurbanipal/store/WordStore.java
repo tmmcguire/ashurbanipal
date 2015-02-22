@@ -2,12 +2,12 @@ package net.crsr.ashurbanipal.store;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +45,7 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
     w.write(sb.toString().getBytes());
   }
 
-  private void append(String filename, Map<String,Integer> wordCounts) throws IOException {
+  public void append(String filename, Map<String,Integer> wordCounts) throws IOException {
     OutputStream os = null;
     try {
       os = new FileOutputStream(file.getAbsoluteFile(), true);
@@ -57,6 +57,14 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
         os.close();
       }
     }
+  }
+  
+  public Map<String,Set<String>> asSetsOfWords() {
+    final Map<String,Set<String>> result = new HashMap<>();
+    for (Entry<String,Map<String,Integer>> entry : this.entrySet()) {
+      result.put(entry.getKey(), entry.getValue().keySet());
+    }
+    return result;
   }
 
   private void formatEntry(final StringBuilder sb, String filename, Map<String,Integer> wordCounts) {
@@ -105,45 +113,22 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
 
   @Override
   public Map<String,Integer> put(String key, Map<String,Integer> value) {
-    try {
-      final Map<String,Integer> result = wordStore.put(key, value);
-      // this.write();
-      this.append(key, value);
-      return result;
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    return wordStore.put(key, value);
   }
 
   @Override
   public Map<String,Integer> remove(Object key) {
-    try {
-      final Map<String,Integer> result = wordStore.remove(key);
-      this.write();
-      return result;
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    return wordStore.remove(key);
   }
 
   @Override
   public void putAll(Map<? extends String,? extends Map<String,Integer>> m) {
-    try {
-      wordStore.putAll(m);
-      this.write();
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    wordStore.putAll(m);
   }
 
   @Override
   public void clear() {
-    try {
-      wordStore.clear();
-      this.write();
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    wordStore.clear();
   }
 
   @Override

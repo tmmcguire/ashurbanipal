@@ -122,44 +122,22 @@ public class PosStore extends AbstractFileStore implements Map<String,Map<String
 
   @Override
   public Map<String,Double> put(String key, Map<String,Double> value) {
-    try {
-      final Map<String,Double> result = posTable.put(prepareFilename(key), value);
-      this.write();
-      return result;
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    return posTable.put(prepareFilename(key), value);
   }
 
   @Override
   public Map<String,Double> remove(Object key) {
-    try {
-      final Map<String,Double> result = posTable.remove(key);
-      this.write();
-      return result;
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    return posTable.remove(key);
   }
 
   @Override
   public void putAll(Map<? extends String,? extends Map<String,Double>> m) {
-    try {
-      posTable.putAll(m);
-      this.write();
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    posTable.putAll(m);
   }
 
   @Override
   public void clear() {
-    try {
-      posTable.clear();
-      this.write();
-    } catch (IOException e) {
-      throw new IOError(e);
-    }
+    posTable.clear();
   }
 
   @Override

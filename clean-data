@@ -1,0 +1,5 @@
+JAVA_HOME=$HOME/soft/jdk1.8.0_31
+
+PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
+
+java -server -cp bin net.crsr.ashurbanipal.DataCleaner gutenberg.metadata gutenberg.formats gutenberg.nouns gutenberg.verbs gutenberg.pos
