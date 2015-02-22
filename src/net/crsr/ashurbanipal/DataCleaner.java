@@ -26,7 +26,7 @@ public class DataCleaner {
     final MetadataStore cleanedMetadata = new MetadataStore("c-" + args[0]);
     for (Entry<Integer,Map<String,List<String>>> elt : metadataStore.entrySet()) {
       for (String lang : elt.getValue().get("language")) {
-        if ("English".equalsIgnoreCase(lang)) {
+        if (lang.contains("English")) {
           cleanedMetadata.put(elt.getKey(), elt.getValue());
         }
       }
