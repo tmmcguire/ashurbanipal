@@ -41,7 +41,7 @@ public class CombinedLookup {
       for (Pair<Map<String,Double>,Map<String,Integer>> match : matches) {
         printHeader();
         printMetadata(metadata);
-        for (Pair<Double,String> neighbors : nearestNeighbors(posStore, nounStore, match).subList(0, 10)) {
+        for (Pair<Double,String> neighbors : nearestNeighbors(posStore, nounStore, match)) {
           int neighborNo = etextLookupMap.get(neighbors.r);
           if (neighborNo != etextNo) {
             printMetadata(neighbors.l, metadataStore.get(neighborNo));
@@ -81,7 +81,8 @@ public class CombinedLookup {
     for (Pair<Double,String> elt : topic) {
       final Double styleDistance = style.get(elt.r);
       if (styleDistance != null) {
-        results.add(Pair.pair(elt.l * styleDistance, elt.r));
+        // Drastically enhance the topic power to get the two whiskey books close together.
+        results.add(Pair.pair(Math.pow(elt.l, 6) * styleDistance, elt.r));
       } else {
         System.err.format("%s: style information not found\n", elt.r);
       }

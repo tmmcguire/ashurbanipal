@@ -40,7 +40,7 @@ public class TopicLookup {
       for (Map<String,Integer> match : matches) {
         printHeader();
         printMetadata(metadata);
-        for (Pair<Double,String> neighbors : nearestNeighbors(nounStore, match).subList(0, 10)) {
+        for (Pair<Double,String> neighbors : nearestNeighbors(nounStore, match)) {
           int neighborNo = etextLookupMap.get(neighbors.r);
           if (neighborNo != etextNo) {
             printMetadata(neighbors.l, metadataStore.get(neighborNo));

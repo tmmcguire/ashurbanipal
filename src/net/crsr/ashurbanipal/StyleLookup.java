@@ -37,7 +37,7 @@ public class StyleLookup {
       for (Map<String,Double> match : matches) {
         printHeader();
         printMetadata(metadata);
-        for (Pair<Double,String> neighbors : nearestNeighbors(posStore, match).subList(0, 10)) {
+        for (Pair<Double,String> neighbors : nearestNeighbors(posStore, match)) {
           int neighborNo = etextLookupMap.get(neighbors.r);
           if (neighborNo != etextNo) {
             printMetadata(neighbors.l, metadataStore.get(neighborNo));
