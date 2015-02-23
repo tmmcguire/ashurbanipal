@@ -14,5 +14,6 @@
 			<attribute name="javadoc_location" value="jar:file:/home/mcguire/tmp/gutenberg/dvd/stanford/jsoup-1.8.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
