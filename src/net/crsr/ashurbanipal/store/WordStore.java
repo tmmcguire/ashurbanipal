@@ -16,9 +16,16 @@ import java.util.TreeMap;
 public class WordStore extends AbstractFileStore implements Map<String,Map<String,Integer>> {
 
   private final Map<String,Map<String,Integer>> wordStore = new TreeMap<>();
+  private final int setSize;
 
   public WordStore(String filename) throws IOException {
     super(filename);
+    this.setSize = 200;
+  }
+
+  public WordStore(String filename, int setSize) throws IOException {
+    super(filename);
+    this.setSize = setSize;
   }
 
   @Override
@@ -77,7 +84,8 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
         return -Integer.compare(left.getValue(), right.getValue());
       }
     });
-    for (Entry<String,Integer> subentry : values.subList(0, Integer.min(200, values.size()))) {
+    final int setSizeLimit = setSize > 0 ? Integer.min(setSize, values.size()) : values.size();
+    for (Entry<String,Integer> subentry : values.subList(0, setSizeLimit)) {
       sb.append(subentry.getKey()).append(' ').append(subentry.getValue()).append('\t');
     }
     // for (Entry<String,Integer> subentry : entry.getValue().entrySet()) {

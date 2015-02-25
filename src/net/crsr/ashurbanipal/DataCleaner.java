@@ -3,6 +3,8 @@ package net.crsr.ashurbanipal;
 import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,23 +54,60 @@ public class DataCleaner {
     return cleanedMetadata;
   }
   
+  private static final Map<String,Integer> preferredContentTypes = new HashMap<>();
+  static {
+    int i = 0;
+    for (String contentType : Arrays.asList(
+        "text/plain; charset=\"utf-8\"",
+        "text/plain; charset=\"iso-8859-1\"",
+        "text/plain; charset=\"us-ascii\"",
+        "text/plain",
+        "text/plain; charset=\"ibm437\"",
+        "text/plain; charset=\"ibm850\"",
+        "text/plain; charset=\"big5\"",
+        "text/plain; charset=\"euc-kr\"",
+        "text/plain; charset=\"macintosh\"",
+        "text/plain; charset=\"windows-1252\"",
+        "text/plain; charset=\"x-other\""
+        )) {
+      preferredContentTypes.put(contentType, i++);
+    }
+  }
+  
   private static FormatStore cleanFormats(MetadataStore metadata, String filename) throws IOException {
     final FormatStore formatStore = new FormatStore(filename);
     formatStore.read();
     final FormatStore cleanedFormats = new FormatStore("c-" + filename);
+    
     for (Entry<Integer,List<Pair<String,String>>> elt : formatStore.entrySet()) {
       final Integer etext = elt.getKey();
       // filter out files for which there is no metadata (i.e. non-English texts)
       if (! metadata.containsKey(etext)) { continue; }
+      
       final List<Pair<String,String>> cleanedFiles = new ArrayList<>();
-      // filter out non-plain text files
       for (Pair<String,String> file : elt.getValue()) {
-        if (file.l.contains("text/plain")) {
-          cleanedFiles.add(file);
-        }
+        // filter out non-plain text files
+        if (! file.l.contains("text/plain")) { continue; }
+        cleanedFiles.add(file);
       }
-      cleanedFormats.put(etext, cleanedFiles);
+      if (cleanedFiles.isEmpty()) { continue; }
+      
+      if (cleanedFiles.size() > 1) {
+        // prefer files with 'better' content types
+        cleanedFiles.sort(new Comparator<Pair<String,String>> () {
+          @Override
+          public int compare(Pair<String,String> left, Pair<String,String> right) {
+            final Integer leftPreference = preferredContentTypes.get(left.l);
+            final Integer rightPreference = preferredContentTypes.get(right.l);
+            return Integer.compare(leftPreference, rightPreference);
+          }
+        });
+      }
+      
+      // retain only one file
+      cleanedFormats.put(etext, cleanedFiles.subList(0, 1));
     }
+
     cleanedFormats.write();
     return cleanedFormats;
   }
@@ -93,7 +132,7 @@ public class DataCleaner {
     final WordStore wordStore = new WordStore(filename);
     wordStore.read();
     final Map<String,Set<String>> wordsToFiles = invert( wordStore.asSetsOfWords() );
-    final WordStore cleanedWordStore = new WordStore("c-" + filename);
+    final WordStore cleanedWordStore = new WordStore("c-" + filename, 100);
     for (Entry<String,Map<String,Integer>> entry : wordStore.entrySet()) {
       // filter out entries which do not have a matching file record
       final String file = entry.getKey();
