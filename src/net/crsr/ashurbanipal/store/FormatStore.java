@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import net.crsr.ashurbanipal.utility.Pair;
 
@@ -71,6 +72,18 @@ public class FormatStore extends AbstractFileStore implements Map<Integer,List<P
       }
     }
     return map;
+  }
+  
+  public Map<Integer,String> asFileLookupMap() {
+    // This assumes the FormatStore contains only one file for each etext.
+    final Map<Integer,String> result = new TreeMap<>();
+    for (Entry<Integer,List<Pair<String,String>>> entry : formatsTable.entrySet()) {
+      if (entry.getValue().size() != 1) {
+        throw new IllegalStateException("etext " + entry.getKey() + " has multiple files");
+      }
+      result.put(entry.getKey(), entry.getValue().get(0).r);
+    }
+    return result;
   }
 
   @Override
