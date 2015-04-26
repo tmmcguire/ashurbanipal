@@ -23,6 +23,10 @@ Basic instructions from
     $ createuser --interactive
     $ sudo adduser <user>  # to create the system account
 
+Note: set database password here. If needed later, use the command:
+
+    alter role <user> with encrypted password '<password>';
+
 ## ...Create a new database ##
 
     $ createdb <user>
