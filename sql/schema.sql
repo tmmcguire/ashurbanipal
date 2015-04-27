@@ -159,7 +159,7 @@ $$ language plpgsql;
 
 create or replace function topic_scores(orig integer) returns table(etext_no integer, score double precision) as $$
 begin
-  return query select scores.etext_no, sum(score1 + score2) / 2 as score
+  return query select scores.etext_no, 1 - sum(score1 + score2) / 2 as score
   from (
     select t1.etext_no,t1.score as score1,t2.score as score2
     from topics t1 inner join (
@@ -179,7 +179,7 @@ $$ language plpgsql;
 
 create or replace function topic_counts(orig integer) returns table(etext_no integer, score numeric) as $$
 begin
-  return query select topics.etext_no, count(topics.word) / 200.0 as score
+  return query select topics.etext_no, 1 - count(topics.word) / 200.0 as score
   from topics inner join (
        select topics.word from topics where topics.etext_no = orig
   ) sq on (topics.word = sq.word) group by topics.etext_no order by score desc;
