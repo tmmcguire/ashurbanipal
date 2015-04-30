@@ -198,8 +198,8 @@ begin
     topics.etext_no,
     topics.score * topics.score * styles.dist as dist_score
   from
-    topic_scores(779) topics
-    inner join pos_distances(779) styles on (styles.etext_no = topics.etext_no)
+    topic_scores(orig) topics
+    inner join pos_distances(orig) styles on (styles.etext_no = topics.etext_no)
   order by dist_score;
 end;
 $$ language plpgsql;
