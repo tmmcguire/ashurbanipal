@@ -149,13 +149,14 @@ begin
 end;
 $$ language plpgsql;
 
--- By score: The score for two texts, A and B, is the average of the
--- scores for each topic word in the insersection of A and B, summed
--- across the words. The score for a text and itself will be 1.0; the
--- score for two completely different texts will be 0.0.
+-- By score: The score for two texts, A and B, is one minus the
+-- average of the scores for each topic word in the insersection of A
+-- and B, summed across the words. The score for a text and itself
+-- will be 0.0; the score for two completely different texts will be
+-- 1.0.
 -- 
 -- Use:
--- select * from topic_scores(773) ts inner join book_metadata bm on (ts.etext_no = bm.etext_no) order by score desc;
+-- select * from topic_scores(773) ts inner join book_metadata bm on (ts.etext_no = bm.etext_no) order by score;
 
 create or replace function topic_scores(orig integer) returns table(etext_no integer, score double precision) as $$
 begin
@@ -169,13 +170,13 @@ begin
 end;
 $$ language plpgsql;
 
--- By count: The count is simply the number of topic words in the
--- intersection of two texts, A and B, divided by the number of
--- possible words, 200. The score for a text and itself will be 1.0;
--- the score for two completely different texts will be 0.0.
+-- By count: The count is simply one minus the number of topic words
+-- in the intersection of two texts, A and B, divided by the number of
+-- possible words, 200. The score for a text and itself will be 0.0;
+-- the score for two completely different texts will be 1.0.
 -- 
 -- Use:
--- select * from topic_counts(773) tc inner join book_metadata bm on (tc.etext_no = bm.etext_no) order by score desc;
+-- select * from topic_counts(773) tc inner join book_metadata bm on (tc.etext_no = bm.etext_no) order by score;
 
 create or replace function topic_counts(orig integer) returns table(etext_no integer, score numeric) as $$
 begin
@@ -183,5 +184,22 @@ begin
   from topics inner join (
        select topics.word from topics where topics.etext_no = orig
   ) sq on (topics.word = sq.word) group by topics.etext_no order by score desc;
+end;
+$$ language plpgsql;
+
+-- Sort books by a combination of style and topic. The combination is
+-- currently (score*score) * pos_distance.
+--
+-- Use:
+-- select * from combination_scores(773) tc inner join book_metadata bm on (tc.etext_no = bm.etext_no) order by dist_score;
+create or replace function combination_scores(orig integer) returns table(etext_no integer, dist_score double precision) as $$
+begin
+  return query select
+    topics.etext_no,
+    topics.score * topics.score * styles.dist as dist_score
+  from
+    topic_scores(779) topics
+    inner join pos_distances(779) styles on (styles.etext_no = topics.etext_no)
+  order by dist_score;
 end;
 $$ language plpgsql;
