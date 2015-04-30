@@ -145,7 +145,7 @@ $$ language plpgsql;
 -- select * from pos_distances(2701) pd inner join book_metadata bm on (pd.etext_no = bm.etext_no) order by pd.dist;
 create or replace function pos_distances(orig integer) returns table(etext_no integer, dist double precision) as $$
 begin
-  return query select pos.etext_no, pos_distance(orig, pos.*) as dist from parts_of_speech pos order by dist;
+  return query select pos.etext_no, pos_distance(orig, pos.*) as dist from parts_of_speech pos;
 end;
 $$ language plpgsql;
 
@@ -166,7 +166,7 @@ begin
     from topics t1 inner join (
       select topics.word, topics.score from topics where topics.etext_no = orig
     ) t2 on (t1.word = t2.word)
-  ) scores group by scores.etext_no order by score desc;
+  ) scores group by scores.etext_no;
 end;
 $$ language plpgsql;
 
@@ -183,7 +183,7 @@ begin
   return query select topics.etext_no, 1 - count(topics.word) / 200.0 as score
   from topics inner join (
        select topics.word from topics where topics.etext_no = orig
-  ) sq on (topics.word = sq.word) group by topics.etext_no order by score desc;
+  ) sq on (topics.word = sq.word) group by topics.etext_no;
 end;
 $$ language plpgsql;
 
@@ -199,7 +199,6 @@ begin
     topics.score * topics.score * styles.dist as dist_score
   from
     topic_scores(orig) topics
-    inner join pos_distances(orig) styles on (styles.etext_no = topics.etext_no)
-  order by dist_score;
-end;
+    inner join pos_distances(orig) styles on (styles.etext_no = topics.etext_no);
+  end;
 $$ language plpgsql;
