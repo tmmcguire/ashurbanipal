@@ -144,8 +144,8 @@ public class FormatStore extends AbstractFileStore implements Map<Integer,List<P
     for (Pair<String,String> elt : formats) {
       sb
       .append( etextNo ).append('\t')
-      .append( escape(elt.l) ).append('\t')
-      .append( escape(elt.l) ).append('\n');
+      .append( elt.l ).append('\t')
+      .append( elt.r ).append('\n');
     }
   }
 
