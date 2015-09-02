@@ -1,7 +1,6 @@
 package net.crsr.ashurbanipal.store;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -14,6 +13,9 @@ import java.util.TreeMap;
 
 import net.crsr.ashurbanipal.utility.Pair;
 
+/**
+ * Mapping from etext numbers to pairs of (filename, content-type).
+ */
 public class FormatStore extends AbstractFileStore implements Map<Integer,List<Pair<String,String>>> {
 
   private final Map<Integer,List<Pair<String,String>>> formatsTable = new HashMap<>();
@@ -35,7 +37,7 @@ public class FormatStore extends AbstractFileStore implements Map<Integer,List<P
         entry = new ArrayList<>();
         formatsTable.put(etextNo, entry);
       }
-      entry.add(Pair.pair(values[1], values[2]));
+      entry.add(Pair.pair(unescape(values[1]), unescape(values[2])));
       line = r.readLine();
     }
   }
@@ -49,19 +51,11 @@ public class FormatStore extends AbstractFileStore implements Map<Integer,List<P
     }
     w.write(sb.toString().getBytes());
   }
-
+  
   public void append(int etextNo, List<Pair<String,String>> formats) throws IOException {
-    OutputStream os = null;
-    try {
-      os = new FileOutputStream(file.getAbsoluteFile(), true);
       final StringBuilder sb = new StringBuilder();
       this.formatEntry(sb, etextNo, formats);
-      os.write(sb.toString().getBytes());
-    } finally {
-      if (os != null) {
-        os.close();
-      }
-    }
+      this.appendString(sb.toString());
   }
 
   public Map<String,Integer> asEtextNoLookupMap() {
@@ -148,7 +142,10 @@ public class FormatStore extends AbstractFileStore implements Map<Integer,List<P
 
   private void formatEntry(StringBuilder sb, int etextNo, List<Pair<String,String>> formats) {
     for (Pair<String,String> elt : formats) {
-      sb.append(etextNo).append('\t').append(elt.l).append('\t').append(elt.r).append('\n');
+      sb
+      .append( etextNo ).append('\t')
+      .append( escape(elt.l) ).append('\t')
+      .append( escape(elt.l) ).append('\n');
     }
   }
 

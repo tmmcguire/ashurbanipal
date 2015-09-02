@@ -13,9 +13,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class WordStore extends AbstractFileStore implements Map<String,Map<String,Integer>> {
+/**
+ * Word count storage file.
+ * 
+ * <p>
+ * This file contains the entry for one text per line, with the columns being
+ * the etext number followed by (word, count) pairs for the <code>setSize</code>
+ * most common words in the text. Tabs separate columns and a space separates the
+ * word and count.
+ * 
+ * <p>
+ * If <code>setSize</code> is 0, all words inserted into the {@link WordStore} are kept when the file is written.
+ * If <code>setSize</code> is greater than 0, only the <code>setSize</code> most numerous words are kept.
+ * The default for <code>setSize</code> is 200.
+ */
+public class WordStore extends AbstractFileStore implements Map<Integer,Map<String,Integer>> {
 
-  private final Map<String,Map<String,Integer>> wordStore = new TreeMap<>();
+  private final Map<Integer,Map<String,Integer>> wordStore = new TreeMap<>();
   private final int setSize;
 
   public WordStore(String filename) throws IOException {
@@ -34,7 +48,7 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
     while (line != null) {
       final String[] values = line.split("\\t");
       final Map<String,Integer> data = new TreeMap<>();
-      wordStore.put(values[0], data);
+      wordStore.put(Integer.valueOf(values[0]), data);
       for (int i = 1; i < values.length; ++i) {
         final String[] pair = values[i].split(" ", 2);
         data.put(pair[0], Integer.valueOf(pair[1]));
@@ -46,18 +60,18 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
   @Override
   protected void writeData(OutputStream w) throws IOException {
     final StringBuilder sb = new StringBuilder();
-    for (Entry<String,Map<String,Integer>> entry : wordStore.entrySet()) {
+    for (Entry<Integer,Map<String,Integer>> entry : wordStore.entrySet()) {
       formatEntry(sb, entry.getKey(), entry.getValue());
     }
     w.write(sb.toString().getBytes());
   }
 
-  public void append(String filename, Map<String,Integer> wordCounts) throws IOException {
+  public void append(Integer etextNo, Map<String,Integer> wordCounts) throws IOException {
     OutputStream os = null;
     try {
       os = new FileOutputStream(file.getAbsoluteFile(), true);
       final StringBuilder sb = new StringBuilder();
-      this.formatEntry(sb, filename, wordCounts);
+      this.formatEntry(sb, etextNo, wordCounts);
       os.write(sb.toString().getBytes());
     } finally {
       if (os != null) {
@@ -66,16 +80,16 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
     }
   }
   
-  public Map<String,Set<String>> asSetsOfWords() {
-    final Map<String,Set<String>> result = new HashMap<>();
-    for (Entry<String,Map<String,Integer>> entry : this.entrySet()) {
+  public Map<Integer,Set<String>> asSetsOfWords() {
+    final Map<Integer,Set<String>> result = new HashMap<>();
+    for (Entry<Integer,Map<String,Integer>> entry : this.entrySet()) {
       result.put(entry.getKey(), entry.getValue().keySet());
     }
     return result;
   }
 
-  private void formatEntry(final StringBuilder sb, String filename, Map<String,Integer> wordCounts) {
-    sb.append(filename).append('\t');
+  private void formatEntry(final StringBuilder sb, Integer etextNo, Map<String,Integer> wordCounts) {
+    sb.append(etextNo).append('\t');
 
     final List<Entry<String,Integer>> values = new ArrayList<>(wordCounts.entrySet());
     values.sort(new Comparator<Entry<String,Integer>>() {
@@ -88,9 +102,6 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
     for (Entry<String,Integer> subentry : values.subList(0, setSizeLimit)) {
       sb.append(subentry.getKey()).append(' ').append(subentry.getValue()).append('\t');
     }
-    // for (Entry<String,Integer> subentry : entry.getValue().entrySet()) {
-    // sb.append(subentry.getKey()).append(' ').append(subentry.getValue()).append('\t');
-    // }
     sb.append('\n');
   }
 
@@ -120,7 +131,7 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
   }
 
   @Override
-  public Map<String,Integer> put(String key, Map<String,Integer> value) {
+  public Map<String,Integer> put(Integer key, Map<String,Integer> value) {
     return wordStore.put(key, value);
   }
 
@@ -130,7 +141,7 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
   }
 
   @Override
-  public void putAll(Map<? extends String,? extends Map<String,Integer>> m) {
+  public void putAll(Map<? extends Integer,? extends Map<String,Integer>> m) {
     wordStore.putAll(m);
   }
 
@@ -140,7 +151,7 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
   }
 
   @Override
-  public Set<String> keySet() {
+  public Set<Integer> keySet() {
     return wordStore.keySet();
   }
 
@@ -150,7 +161,7 @@ public class WordStore extends AbstractFileStore implements Map<String,Map<Strin
   }
 
   @Override
-  public Set<java.util.Map.Entry<String,Map<String,Integer>>> entrySet() {
+  public Set<java.util.Map.Entry<Integer,Map<String,Integer>>> entrySet() {
     return wordStore.entrySet();
   }
 

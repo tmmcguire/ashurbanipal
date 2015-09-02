@@ -1,7 +1,6 @@
 package net.crsr.ashurbanipal.store;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,14 +12,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+/**
+ * Mapping from etext number to Project Gutenberg text metadata.
+ */
 public class MetadataStore extends AbstractFileStore implements Map<Integer,Map<String,List<String>>> {
 
   public static int getEtextNumber(Map<String,List<String>> metadata) {
     return Integer.valueOf(metadata.get("etext_no").get(0));
   }
 
-  private static final List<String> columns = new ArrayList<>(Arrays.asList("etext_no", "link", "title", "author", "subject", "language",
-      "release_date", "loc_class", "note", "copyright_status"));
+  private static final List<String> columns = new ArrayList<>(Arrays.asList(
+      "etext_no",
+      "author",
+      "copyright_status",
+      "language",
+      "link",
+      "loc_class",
+      "note",
+      "release_date",
+      "subject",
+      "title"
+      ));
 
   private final Map<Integer,Map<String,List<String>>> metadataTable = new TreeMap<>();
 
@@ -37,7 +49,7 @@ public class MetadataStore extends AbstractFileStore implements Map<Integer,Map<
       final String[] values = line.split("\\t");
       final Map<String,List<String>> data = new HashMap<>();
       for (int i = 0; i < values.length; ++i) {
-        data.put(columns.get(i), Arrays.asList(values[i].split("; ")));
+        data.put(columns.get(i), unescapeOnSemicolon(values[i]));
       }
       metadataTable.put(getEtextNumber(data), data);
       line = r.readLine();
@@ -58,24 +70,15 @@ public class MetadataStore extends AbstractFileStore implements Map<Integer,Map<
   }
 
   public void append(Map<String,List<String>> metadata) throws IOException {
-    OutputStream os = null;
-    try {
-      os = new FileOutputStream(file.getAbsoluteFile(), true);
       final StringBuilder sb = new StringBuilder();
       this.formatEntry(sb, metadata);
-      os.write(sb.toString().getBytes());
-    } finally {
-      if (os != null) {
-        os.close();
-      }
-    }
+      this.appendString(sb.toString());
   }
 
   private void formatEntry(StringBuilder sb, Map<String,List<String>> metadata) {
-    sb.append(String.join("; ", metadata.get(columns.get(0))));
+    sb.append( escape(metadata.get(columns.get(0))) );
     for (String column : columns.subList(1, columns.size())) {
-      final List<String> value = metadata.get(column);
-      sb.append('\t').append(value != null ? String.join("; ", value) : "");
+      sb.append('\t').append( escape(metadata.get(column)) );
     }
     sb.append('\n');
   }
