@@ -67,6 +67,7 @@ public class WordStore extends AbstractFileStore implements Map<Integer,Map<Stri
   }
 
   public void append(Integer etextNo, Map<String,Integer> wordCounts) throws IOException {
+    wordStore.put(etextNo, wordCounts);
     OutputStream os = null;
     try {
       os = new FileOutputStream(file.getAbsoluteFile(), true);
