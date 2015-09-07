@@ -40,18 +40,6 @@ public class ZippedTextFileReader extends Reader {
     } catch (IOException e) {
       throw new Exception("error reading archive entry: " + e.toString(), e);
     }
-    
-//    InputStreamReader temp = null;
-//    zipFile = new ZipFile(file);
-//    final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-//    while (entries.hasMoreElements()) {
-//      final ZipEntry entry = entries.nextElement();
-//      if (!entry.isDirectory() && entry.getName().endsWith(".txt")) {
-//        temp = new InputStreamReader(zipFile.getInputStream(entry));
-//        break;
-//      }
-//    }
-//    inputStream = temp;
   }
 
   @Override
