@@ -43,6 +43,10 @@ public class TagTodoList {
       
       for (int i = 0; i < count; ++i) {
         storeResult(fileListProcessor, posStore, nounStore);
+        if (i % 50 == 0) {
+          posStore.write();
+          nounStore.write();
+        }
       }
       
       fileListProcessor.shutdown();
