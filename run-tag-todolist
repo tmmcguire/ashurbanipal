@@ -4,6 +4,6 @@ JAVA_HOME=$HOME/soft/jdk1.8.0_31
 
 PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
 
-HEAD=10G
+HEAP=10G
 
 java -server $PROPS  -Xmx$HEAP -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -cp lib/commons-compress-1.10.jar:lib/stanford-postagger-3.5.1.jar:bin net.crsr.ashurbanipal.TagTodoList "$@"
