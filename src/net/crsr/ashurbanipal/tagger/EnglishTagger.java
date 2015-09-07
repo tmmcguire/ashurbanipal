@@ -70,7 +70,6 @@ public class EnglishTagger extends Tagger {
     for (Entry<String,Double> entry : result.entrySet()) {
       entry.setValue(entry.getValue() / words);
     }
-    System.err.println(result);
     return result;
   }
 }

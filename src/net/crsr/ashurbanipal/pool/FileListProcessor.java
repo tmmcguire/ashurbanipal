@@ -13,7 +13,6 @@ public class FileListProcessor extends WorkPool<TaggerResult> {
   private final Set<Integer> seen;
 
   public FileListProcessor(Set<Integer> seenEtextNos) {
-    System.err.println("seen: " + seenEtextNos);
     this.seen = seenEtextNos;
   }
   

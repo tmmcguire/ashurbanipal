@@ -3,8 +3,11 @@ package net.crsr.ashurbanipal;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +15,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import net.crsr.ashurbanipal.pool.FileListProcessor;
-import net.crsr.ashurbanipal.pool.FileListProcessor.Exception;
 import net.crsr.ashurbanipal.store.PosStore;
 import net.crsr.ashurbanipal.store.WordStore;
 import net.crsr.ashurbanipal.tagger.TaggerResult;
@@ -40,21 +42,7 @@ public class TagTodoList {
       final int count = fileListProcessor.walk(todoList);
       
       for (int i = 0; i < count; ++i) {
-        try {
-          
-          final TaggerResult taggerResult = fileListProcessor.get();
-          if (taggerResult == null) {
-            // unrecognized language?
-            continue;
-          } else {
-            posStore.append(taggerResult.a, taggerResult.b);
-            nounStore.append(taggerResult.a, mergeWordCounts(taggerResult.c.get("NN"), taggerResult.c.get("NNS")));
-          }
-
-        } catch (Exception e) {
-          System.err.println("Error with task: " + e.toString());
-          e.printStackTrace(System.err);
-        }
+        storeResult(fileListProcessor, posStore, nounStore);
       }
       
       fileListProcessor.shutdown();
@@ -62,11 +50,40 @@ public class TagTodoList {
     } catch (ArrayIndexOutOfBoundsException e) {
       System.out.println("Usage: TagTodoList todo-list base-directory POS-file Noun-file");
     } catch (IOException e) {
+      System.out.println("error: " + e.toString());
       e.printStackTrace();
     } catch (InterruptedException e) {
       System.out.println("warning: " + e.toString());
+      e.printStackTrace();
     }
 
+  }
+
+  private static void storeResult(final FileListProcessor fileListProcessor, final PosStore posStore, final WordStore nounStore) throws IOException {
+    try {
+
+      final TaggerResult taggerResult = fileListProcessor.get();
+      if (taggerResult == null) {
+        return;
+      } else {
+        posStore.append(taggerResult.a, taggerResult.b);
+        nounStore.append(taggerResult.a, mergeWordCounts(taggerResult.c.get("NN"), taggerResult.c.get("NNS")));
+      }
+
+    } catch (Throwable e) {
+      PrintWriter bw = null;
+      try {
+        bw = new PrintWriter(new FileOutputStream("TagTodoList.errors", true));
+        bw.format("Error with task: " + e.toString());
+        e.printStackTrace(bw);
+      } catch (FileNotFoundException e1) {
+        throw new Error("cannot write error log", e);
+      } finally {
+        if (bw != null) { try { bw.close(); } catch (Throwable t) { } }
+      }
+      System.err.println("Error with task: " + e.toString());
+      e.printStackTrace(System.err);
+    }
   }
 
   /**

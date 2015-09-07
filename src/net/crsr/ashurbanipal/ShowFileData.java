@@ -23,13 +23,15 @@ public class ShowFileData {
         if (!file.canRead()) {
           System.err.println("cannot read: " + file.getPath());
         }
-        br = new BufferedReader(new GutenbergLicenseReader(new ZippedTextFileReader(file))); // new GutenbergLicenseReader(new ZippedTextFileReader(file))
+        br = new BufferedReader(new GutenbergLicenseReader(new ZippedTextFileReader(file)));
         String line = br.readLine();
         while (line != null) {
           System.out.println(line);
           line = br.readLine();
         }
       } catch (IOException e) {
+        e.printStackTrace();
+      } catch (net.crsr.ashurbanipal.reader.ZippedTextFileReader.Exception e) {
         e.printStackTrace();
       } finally {
         if (br != null) { try { br.close(); } catch (Exception e) { } }

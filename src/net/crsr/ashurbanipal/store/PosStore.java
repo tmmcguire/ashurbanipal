@@ -65,7 +65,6 @@ public class PosStore extends AbstractFileStore implements Map<Integer,Map<Strin
       final Map<String,Double> data = new HashMap<>();
       posTable.put(etextNo, data);
       for (int i = 1; i < values.length; ++i) {
-        System.err.println(columns + " " + i);
         data.put(columns.get(i-1), Double.valueOf(values[i]));
       }
       line = r.readLine();

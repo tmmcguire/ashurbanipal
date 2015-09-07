@@ -15,5 +15,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.10.jar" sourcepath="/home/mcguire/tmp/gutenberg/dvd/workspace/Libraries/commons-compress-1.10/commons-compress-1.10-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/mcguire/tmp/gutenberg/dvd/workspace/Libraries/commons-compress-1.10/commons-compress-1.10-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
