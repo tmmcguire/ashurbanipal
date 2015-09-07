@@ -21,19 +21,20 @@ import edu.stanford.nlp.tagger.maxent.MaxentTagger;
  * Process texts through the MaxentTagger, generating a proportional tag map and
  * a set of noun/verb word counts.
  */
-public class StanfordTagger {
+public class EnglishTagger extends Tagger {
 
   private final TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(), "asciiQuotes,untokenizable=noneKeep");
   private final MaxentTagger tagger = new MaxentTagger("net/crsr/ashurbanipal/tagger/english-left3words-distsim.tagger");
   private final Morphology morphology = new Morphology();
 
-  public StanfordTaggerResult process(String filename, Reader text) {
+  @Override
+  public TaggerResult process(Integer etextNo, Reader text) {
     final DocumentPreprocessor documentPreprocessor = new DocumentPreprocessor(text);
     documentPreprocessor.setTokenizerFactory(tokenizerFactory);
 
     double words = 0.0;
     final Map<String,Double> tagCounts = new TreeMap<String,Double>();
-    final Map<String,Map<String,Integer>> wordBags = new TreeMap<>();
+    final Map<String,Map<String,Integer>> wordBags = new HashMap<>();
     for (List<HasWord> sentence : documentPreprocessor) {
       for (TaggedWord word : tagger.tagSentence(sentence)) {
         // word count
@@ -44,7 +45,7 @@ public class StanfordTagger {
         tagCounts.put(tag, tagCounts.getOrDefault(tag, 0.0) + 1.0);
 
         // noun/verb word bags
-        if ("NN".equals(tag) || "NNS".equals(tag) || tag.startsWith("VB")) {
+        if ("NN".equals(tag) || "NNS".equals(tag) /* || tag.startsWith("VB") */) {
           // get base form of word
           String lemma = morphology.stem(word).toString();
           if (lemma == null) {
@@ -61,13 +62,15 @@ public class StanfordTagger {
         }
       }
     }
-    return new StanfordTaggerResult(filename, tagProportions(words, tagCounts), wordBags);
+    System.err.println("Processed: " + etextNo + " " + words + " words");
+    return new TaggerResult(etextNo, tagProportions(words, tagCounts), wordBags);
   }
 
   private static Map<String,Double> tagProportions(double words, Map<String,Double> result) {
     for (Entry<String,Double> entry : result.entrySet()) {
       entry.setValue(entry.getValue() / words);
     }
+    System.err.println(result);
     return result;
   }
 }

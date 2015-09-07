@@ -1,0 +1,7 @@
+#/bin/sh
+
+JAVA_HOME=$HOME/soft/jdk1.8.0_31
+
+PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
+
+java -server $PROPS -cp lib/jsoup-1.8.1.jar:bin net.crsr.ashurbanipal.ShowFileData "$@"

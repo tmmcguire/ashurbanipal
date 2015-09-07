@@ -48,12 +48,15 @@ public class PosStore extends AbstractFileStore implements Map<Integer,Map<Strin
   @Override
   protected void readData(BufferedReader r) throws IOException {
     // Header line
-    final String columnNamesLine = r.readLine();
-    if (columnNamesLine == null) {
+    final String headerLine = r.readLine();
+    if (headerLine == null) {
       this.valid = false;
       return;
     }
-    columns.addAll(Arrays.asList(columnNamesLine.split("\\t")));
+    final List<String> header = Arrays.asList(headerLine.split("\\t"));
+    if (header.size() > 1) {
+      columns.addAll(header.subList(1, header.size()));
+    }
     // Entries
     String line = r.readLine();
     while (line != null) {
@@ -62,7 +65,8 @@ public class PosStore extends AbstractFileStore implements Map<Integer,Map<Strin
       final Map<String,Double> data = new HashMap<>();
       posTable.put(etextNo, data);
       for (int i = 1; i < values.length; ++i) {
-        data.put(columns.get(i), Double.valueOf(values[i]));
+        System.err.println(columns + " " + i);
+        data.put(columns.get(i-1), Double.valueOf(values[i]));
       }
       line = r.readLine();
     }
@@ -75,7 +79,7 @@ public class PosStore extends AbstractFileStore implements Map<Integer,Map<Strin
       columns.addAll(data.keySet());
     }
     // Header line
-    final StringBuilder sb = new StringBuilder().append("etext");
+    final StringBuilder sb = new StringBuilder().append("etext_no");
     for (String column : columns) {
       sb.append('\t').append(column);
     }
@@ -88,9 +92,17 @@ public class PosStore extends AbstractFileStore implements Map<Integer,Map<Strin
   }
   
   public void append(Integer etextNo, Map<String,Double> data) throws IOException {
-    final StringBuilder sb = new StringBuilder();
-    this.formatEntry(sb, etextNo, data);
-    this.appendString(sb.toString());
+    posTable.put(etextNo, data);
+    final Set<String> newColumns = data.keySet();
+    if (newColumns.size() > columns.size()) {
+      columns.clear();
+      columns.addAll(newColumns);
+      this.write();
+    } else {
+      final StringBuilder sb = new StringBuilder();
+      this.formatEntry(sb, etextNo, data);
+      this.appendString(sb.toString());
+    }
   }
   
   private void formatEntry(StringBuilder sb, Integer etextNo, Map<String,Double> data) {
