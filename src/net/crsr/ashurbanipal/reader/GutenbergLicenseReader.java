@@ -117,7 +117,6 @@ public class GutenbergLicenseReader extends Reader {
       offset = maximalLocationOfStart(string, lineN(string, Math.min(600, lines / 3)));
       mark = offset;
       end = minimalLocationOfEnd(string, Math.max(offset, lineN(string, 100)));
-      System.err.println("Reader " + offset + " " + end);
     } finally {
       reader.close();
     }
@@ -191,16 +190,13 @@ public class GutenbergLicenseReader extends Reader {
   }
   
   static int maximalLocationOfStart(String text, int prefixLength) {
-    System.err.println("prefix " + prefixLength);
     int loc = 0;
     for (String marker : TEXT_START_MARKERS) {
       final int i = text.lastIndexOf('\n' + marker);
-      System.err.println("start " + i);
       if (i > loc && i < prefixLength) {
         loc = i + marker.length();
       }
     }
-    System.err.println("endStart: " + loc);
     while (loc < text.length() && text.charAt(loc) != '\n') {
       loc++;
     }
