@@ -2,4 +2,4 @@ JAVA_HOME=$HOME/soft/jdk1.8.0_31
 
 PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
 
-java -server $PROPS -cp bin net.crsr.ashurbanipal.StyleLookup c-gutenberg.formats c-gutenberg.metadata c-gutenberg.pos "$@"
+java -server $PROPS -cp bin net.crsr.ashurbanipal.StyleLookup gutenberg2010.formats gutenberg2010.metadata gutenberg2010.pos "$@"
