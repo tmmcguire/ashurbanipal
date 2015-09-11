@@ -82,9 +82,7 @@ abstract public class AbstractFileStore {
         j += (str.charAt(j) == '\\') ? 2 : 1;
       }
       results.add( unescape(str.substring(i, j)) );
-      if (str.charAt(j) == ';') {
-        i = j+1;
-      }
+      i = (j < str.length() && str.charAt(j) == ';') ? j + 1 : j;
     }
     
     return results;
