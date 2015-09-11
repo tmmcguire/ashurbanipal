@@ -70,8 +70,8 @@ public class TagTodoList {
       if (taggerResult == null) {
         return;
       } else {
-        posStore.append(taggerResult.a, taggerResult.b);
-        nounStore.append(taggerResult.a, mergeWordCounts(taggerResult.c.get("NN"), taggerResult.c.get("NNS")));
+        posStore.append(taggerResult.etext_no, taggerResult.posData);
+        nounStore.append(taggerResult.etext_no, mergeWordCounts(taggerResult.wordCounts.get("NN"), taggerResult.wordCounts.get("NNS")));
       }
 
     } catch (Throwable e) {

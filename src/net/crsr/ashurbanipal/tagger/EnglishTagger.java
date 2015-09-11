@@ -4,7 +4,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -32,7 +31,7 @@ public class EnglishTagger extends Tagger {
     final DocumentPreprocessor documentPreprocessor = new DocumentPreprocessor(text);
     documentPreprocessor.setTokenizerFactory(tokenizerFactory);
 
-    double words = 0.0;
+    int words = 0;
     final Map<String,Double> tagCounts = new TreeMap<String,Double>();
     final Map<String,Map<String,Integer>> wordBags = new HashMap<>();
     for (List<HasWord> sentence : documentPreprocessor) {
@@ -63,13 +62,6 @@ public class EnglishTagger extends Tagger {
       }
     }
     System.err.println("Processed: " + etextNo + " " + words + " words");
-    return new TaggerResult(etextNo, tagProportions(words, tagCounts), wordBags);
-  }
-
-  private static Map<String,Double> tagProportions(double words, Map<String,Double> result) {
-    for (Entry<String,Double> entry : result.entrySet()) {
-      entry.setValue(entry.getValue() / words);
-    }
-    return result;
+    return new TaggerResult(etextNo, tagCounts, wordBags, words);
   }
 }
