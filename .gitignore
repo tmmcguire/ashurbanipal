@@ -16,3 +16,8 @@ bin/
 
 # Emacs droppings
 *~
+
+TagTodoList.errors
+attic
+
+*.bak
