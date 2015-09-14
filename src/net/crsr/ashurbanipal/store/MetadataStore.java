@@ -28,7 +28,7 @@ public class MetadataStore extends AbstractFileStore implements Map<Integer,Map<
       "language",
       "link",
       "loc_class",
-      "note",
+      "notes",
       "release_date",
       "subject",
       "title"
