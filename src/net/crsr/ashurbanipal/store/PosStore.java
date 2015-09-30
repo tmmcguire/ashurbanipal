@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -31,7 +32,7 @@ import java.util.TreeSet;
  */
 public class PosStore extends AbstractFileStore implements Map<Integer,Map<String,Double>> {
 
-  private final Map<Integer,Map<String,Double>> posTable = new HashMap<>();
+  private final Map<Integer,Map<String,Double>> posTable = new TreeMap<>();
   private final List<String> columns = new ArrayList<>();
 //  private final String prefix;
 
