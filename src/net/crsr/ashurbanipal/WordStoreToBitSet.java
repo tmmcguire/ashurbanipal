@@ -56,6 +56,8 @@ public class WordStoreToBitSet {
       }
       writer.close();
 
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.out.println("Usage: WordStoreToBitSet word-store bitset-word-store");
     } catch (IOException e) {
       throw new IOError(e);
     }
