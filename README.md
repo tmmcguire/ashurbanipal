@@ -11,6 +11,10 @@ information includes:
   subject(s), etext numbers, URLs within the Project Gutenberg
   repository, etc.
 
+  Another part of the metadata relates to the multiple formats in
+  which Project Gutenberg texts are stored. Information is collected
+  about the MIME format and location of each file for each text.
+
 * Part-of-speech data about each English text in the corpus that is
   provided in a text/plain format (for initial ease of
   development). This part-of-speech data is collected by parsing the
@@ -41,27 +45,71 @@ information includes:
   approaches.)
 
 If you are interested in a starting point in the code, likely the best
-would be the TagDirectory.java program, used to produce the raw
+would be the [TagTodoList.java program][1], used to produce the raw
 datasets.
 
-**Note:** this mess needs cleaning badly. For several reasons,
-including the use of the `langdetect` library to detect the language a
-text is written in, despite that information being available from the
-metadata. You can probably see the order in which things were done
-here.
+[1]: https://github.com/tmmcguire/ashurbanipal/blob/master/src/net/crsr/ashurbanipal/TagTodoList.java
 
-Further, the Stanford POS Tagger is used because it seems to be more
-accurate than the other likely candidate, the [Apache
-OpenNLP](https://opennlp.apache.org) project. However, OpenNLP seems
-to be faster and to use less memory and it is unclear if the accuracy
-difference is important. As well, the Stanford POS Tagger likes to
-blow up on large texts.
+The Stanford POS Tagger is used because it seems to be more accurate
+than the other likely candidate, the
+[Apache OpenNLP](https://opennlp.apache.org) project. However, OpenNLP
+seems to be faster and to use less memory and it is unclear if the
+accuracy difference is important. As well, the Stanford POS Tagger
+likes to blow up on large texts.
+
+In order to handle the last problem, each text is broken into smaller
+chunks on paragraph boundaries (or, at least, empty lines) and the
+results combined. Currently, this enables processing of the entire
+Project Gutenberg 2010 DVD in something like eight hours on my laptop.
+
+There are number of scripts in the root directory for either running
+the Java programs correctly or intermediate processing of the data.
+
+* `run-html-metadata`: given a directory of HTML Project Gutenberg
+  metadata files (such as is on the DVD), create metadata and formats
+  files.
+
+* `run-tag-todolist`: process a to-do list, collecting the
+  part-of-speech and noun data.
+
+* `show-data`: using ashurbanipal's text-handling code, show the
+  contents of a text file. (The Project Gutenberg header and footer
+  should be stripped off.)
+
+* `show-text`: using command-line zip utilities, show the contents of
+  a text file.
+
+* `style-lookup`: compute a recommendation list based on the
+  part-of-speech data.
+
+* `topic-lookup`: using the noun data, compute a recommendation list.
+
+* `combined-lookup`: combine the results of both `style-lookup` and
+  `topic-lookup` to produce an overall recommendation.
+
+* `clean-data`: create a copy of the data set containing only complete
+  information.
+
+* `wordstore-to-bitset`: Convert the noun (word store) data to a
+  bitset-style data file for use by the ashurbanipal.web project.
+
+* `pick-content-type.awk`: given a raw to-do list file, pick out the
+  "best" entries as far as content type goes.
+
+* `join-tabs`: call the `join` command line utility with the magic
+  necessary to operate on tab-separated files.
 
 ## SEE ALSO
 
-* [ashurbanipal.web.ui](https://github.com/tmmcguire/ashurbanipal.web.ui): Javascript client UI to the ashurbanipal.web interfaces.
+* [ashurbanipal.web.ui](https://github.com/tmmcguire/ashurbanipal.web.ui):
+  Javascript client UI to the ashurbanipal.web interfaces.
 
-* [ashurbanipal.web](https://github.com/tmmcguire/ashurbanipal.web): Java Servlet-based interface to Ashurbanipal data.
+* [ashurbanipal.web](https://github.com/tmmcguire/ashurbanipal.web):
+  Java Servlet-based interface to Ashurbanipal data. This is obsolete
+  in favor of:
+
+* [rust_ashurbanipal_web](https://github.com/tmmcguire/rust_ashurbanipal_web):
+  Rust-based HTTP interface to Ashurbanipal data.
 
 ## AUTHOR
 
