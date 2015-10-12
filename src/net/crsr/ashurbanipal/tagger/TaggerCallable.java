@@ -1,4 +1,4 @@
-package net.crsr.ashurbanipal.pool;
+package net.crsr.ashurbanipal.tagger;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,6 @@ import java.util.function.Supplier;
 import net.crsr.ashurbanipal.reader.FragmentingReader;
 import net.crsr.ashurbanipal.reader.GutenbergLicenseReader;
 import net.crsr.ashurbanipal.reader.ZippedTextFileReader;
-import net.crsr.ashurbanipal.tagger.Tagger;
-import net.crsr.ashurbanipal.tagger.TaggerResult;
 
 public class TaggerCallable implements Callable<TaggerResult> {
 

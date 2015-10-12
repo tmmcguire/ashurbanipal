@@ -13,10 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
-import net.crsr.ashurbanipal.pool.FileListProcessor;
+import net.crsr.ashurbanipal.pool.FileListWorkPool;
+import net.crsr.ashurbanipal.pool.ProcessorSupplier;
 import net.crsr.ashurbanipal.store.PosStore;
 import net.crsr.ashurbanipal.store.WordStore;
+import net.crsr.ashurbanipal.tagger.TaggerCallable;
 import net.crsr.ashurbanipal.tagger.TaggerResult;
 import net.crsr.ashurbanipal.utility.Triple;
 
@@ -38,18 +41,22 @@ public class TagTodoList {
       nounStore.write();
       
       final List<Triple<Integer,String,File>> todoList = readTodoList(baseDirectory, todoListFile);
-      final FileListProcessor fileListProcessor = new FileListProcessor(posStore.keySet());
-      final int count = fileListProcessor.walk(todoList);
+      final FileListWorkPool<TaggerResult> workPool = new FileListWorkPool<>(posStore.keySet());
+      final int count = workPool.submit(todoList, new ProcessorSupplier<TaggerResult>() {
+        @Override public Callable<TaggerResult> getProcessor(Integer etext_no, String language, File file) {
+          return new TaggerCallable(etext_no, language, file);
+        }
+      });
       
       for (int i = 0; i < count; ++i) {
-        storeResult(fileListProcessor, posStore, nounStore);
+        storeResult(workPool, posStore, nounStore);
         if (i % 50 == 0) {
           posStore.write();
           nounStore.write();
         }
       }
       
-      fileListProcessor.shutdown();
+      workPool.shutdown();
       
     } catch (ArrayIndexOutOfBoundsException e) {
       System.out.println("Usage: TagTodoList todo-list base-directory POS-file Noun-file");
@@ -63,10 +70,10 @@ public class TagTodoList {
 
   }
 
-  private static void storeResult(final FileListProcessor fileListProcessor, final PosStore posStore, final WordStore nounStore) throws IOException {
+  private static void storeResult(final FileListWorkPool<TaggerResult> pool, final PosStore posStore, final WordStore nounStore) throws IOException {
     try {
 
-      final TaggerResult taggerResult = fileListProcessor.get();
+      final TaggerResult taggerResult = pool.getResult();
       if (taggerResult == null) {
         return;
       } else {
