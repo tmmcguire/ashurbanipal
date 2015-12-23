@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -34,7 +33,7 @@ public class PlotTodoList {
       
       FileListWorkPool<SentimentResult> pool = null;
       try {
-        pool = new FileListWorkPool<>(Collections.<Integer> emptyList());
+        pool = new FileListWorkPool<>(scores.keySet());
         final int count = pool.submit(todoList, new ProcessorSupplier<SentimentResult>() {
           @Override
           public Callable<SentimentResult> getProcessor(Integer etext_no, String language, File file) {
