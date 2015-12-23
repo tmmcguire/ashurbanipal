@@ -1,14 +1,10 @@
 package net.crsr.ashurbanipal;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +17,7 @@ import net.crsr.ashurbanipal.store.PosStore;
 import net.crsr.ashurbanipal.store.WordStore;
 import net.crsr.ashurbanipal.tagger.TaggerCallable;
 import net.crsr.ashurbanipal.tagger.TaggerResult;
+import net.crsr.ashurbanipal.utility.IOUtilities;
 import net.crsr.ashurbanipal.utility.Triple;
 
 public class TagTodoList {
@@ -40,7 +37,7 @@ public class TagTodoList {
       nounStore.read();
       nounStore.write();
       
-      final List<Triple<Integer,String,File>> todoList = readTodoList(baseDirectory, todoListFile);
+      final List<Triple<Integer,String,File>> todoList = IOUtilities.readTodoList(baseDirectory, todoListFile);
       final FileListWorkPool<TaggerResult> workPool = new FileListWorkPool<>(posStore.keySet());
       final int count = workPool.submit(todoList, new ProcessorSupplier<TaggerResult>() {
         @Override public Callable<TaggerResult> getProcessor(Integer etext_no, String language, File file) {
@@ -94,34 +91,6 @@ public class TagTodoList {
       }
       System.err.println("Error with task: " + e.toString());
       e.printStackTrace(System.err);
-    }
-  }
-
-  /**
-   * The file format is a header line followed by multiple lines of the following format:
-   * <code>etext_no{tab}language{tab}content_type{tab}filename</code>
-   * 
-   * @param todoListFile name of file containing todo list.
-   * @throws IOException if an error occurs.
-   */
-  private static List<Triple<Integer,String,File>> readTodoList(String baseDirectory, String todoListFile) throws IOException {
-    BufferedReader r = null;
-    try {
-      r = new BufferedReader(new InputStreamReader(new FileInputStream(todoListFile)));
-      // Skip header
-      r.readLine();
-      final List<Triple<Integer,String,File>> todoList = new ArrayList<>();
-      String line = r.readLine();
-      while (line != null) {
-        final String[] values = line.split("\\t");
-        todoList.add( new Triple<>(Integer.valueOf(values[0]), values[1], new File(baseDirectory + values[3])) );
-        line = r.readLine();
-      }
-      return todoList;
-    } finally {
-      if (r != null) {
-        try { r.close(); } catch (IOException e) { }
-      }
     }
   }
   
