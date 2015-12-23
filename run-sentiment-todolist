@@ -1,0 +1,9 @@
+#!/bin/sh
+
+JAVA_HOME=$HOME/soft/jdk1.8.0_31
+
+PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
+
+HEAP=10G
+
+java -server $PROPS  -Xmx$HEAP -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -cp lib/JTransforms-3.1-with-dependencies.jar:lib/commons-compress-1.10.jar:lib/ejml-0.23.jar:lib/stanford-corenlp-3.5.2.jar:lib/stanford-corenlp-3.5.2-models.jar:bin net.crsr.ashurbanipal.PlotTodoList "$@"
