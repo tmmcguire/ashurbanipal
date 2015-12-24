@@ -15,7 +15,7 @@ public class CollectionsUtilities {
    * @return An array of length >= (|c|*mult) of doubles, padded with zeros.
    */
   public static <T extends Collection<Double>> double[] asArray(T c, int mult) {
-    final int cSize = CommonUtils.nextPow2( c.size() * mult );
+    final int cSize = CommonUtils.nextPow2( Math.max(c.size() * mult, 1) );
     final double[] ary = new double[cSize];
     int i = 0;
     for (Double d : c) {
