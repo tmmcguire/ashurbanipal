@@ -48,7 +48,10 @@ public class PlotSentimentLookup {
   public static List<Pair<Double,Integer>> nearestNeighbors(PlotFrequencyStore posStore, List<Complex<Double>> initial) {
     final List<Pair<Double,Integer>> results = new ArrayList<>();
     for (Entry<Integer,List<Complex<Double>>> entry : posStore.entrySet()) {
-      results.add(Pair.pair(computeDistance(initial, entry.getValue()), entry.getKey()));
+      final List<Complex<Double>> comparison = entry.getValue();
+      if (comparison.size() > 15 && hasData(comparison)) {
+        results.add(Pair.pair(computeDistance(initial, comparison), entry.getKey()));
+      }
     }
     results.sort(new Comparator<Pair<Double,Integer>>() {
       @Override
@@ -58,14 +61,21 @@ public class PlotSentimentLookup {
     });
     return results;
   }
+  
+  public static boolean hasData(List<Complex<Double>> list) {
+    for (Complex<Double> d : list) {
+      if (d.real != 0.0 || d.imag != 0.0) { return true; }
+    }
+    return false;
+  }
 
   public static double computeDistance(List<Complex<Double>> left, List<Complex<Double>> right) {
     double distance = 0.0;
     final int length = Math.min(left.size(), right.size());
-    for (int i = 0; i < length; ++i) {
+    for (int i = 1; i < length; ++i) {
       final Complex<Double> l = left.get(i);
       final Complex<Double> r = right.get(i);
-      distance += l.distance(r) * Math.pow(0.99, i);
+      distance += l.distance(r) * Math.pow(0.9, i);
     }
     return distance;
   }
