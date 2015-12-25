@@ -34,7 +34,7 @@ public class ZippedTextFileReader extends Reader {
       inputStream = temp;
 
     } catch (ArchiveException e) {
-      throw new Exception("error reading archive: " + e.toString(), e);
+      throw new Exception("error reading archive " + file.getPath() + ": " + e.toString(), e);
     } catch (FileNotFoundException e) {
       throw new Exception("error opening archive: " + e.toString(), e);
     } catch (IOException e) {
