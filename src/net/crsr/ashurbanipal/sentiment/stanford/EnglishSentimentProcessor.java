@@ -1,10 +1,13 @@
-package net.crsr.ashurbanipal.sentiment;
+package net.crsr.ashurbanipal.sentiment.stanford;
 
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
+import net.crsr.ashurbanipal.sentiment.SentimentProcessor;
+import net.crsr.ashurbanipal.utility.IOUtilities;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -34,7 +37,7 @@ public class EnglishSentimentProcessor extends SentimentProcessor {
 
   @Override
   public void process(Integer etext_no, Reader reader) {
-    final Annotation tokens = new Annotation( readText(reader) );
+    final Annotation tokens = new Annotation( IOUtilities.readText(reader) );
     tokenizerPipeline.annotate(tokens);
     for (CoreMap sentence : tokens.get(CoreAnnotations.SentencesAnnotation.class)) {
       final Annotation annotation = annotateSentiment(sentence);
@@ -67,17 +70,9 @@ public class EnglishSentimentProcessor extends SentimentProcessor {
         maxColValue = colValue;
       }
     }
+    // 1 <= score <= 5
     scoresValues.add(score - 3.0);
-    classesValues.add(cls - 3.0);
-  }
-  
-  private String readText(Reader reader) {
-    BufferedReader br = null;
-    try {
-      br = new BufferedReader(reader);
-      return br.lines().collect(Collectors.joining("\n"));
-    } finally {
-      if (br != null) { try { br.close(); } catch (Exception e) { } }
-    }
+    // 0 <= cls <= 4
+    classesValues.add(cls - 2.0);
   }
 }

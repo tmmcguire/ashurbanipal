@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class IOUtilities {
 
@@ -35,6 +37,22 @@ public class IOUtilities {
       if (r != null) {
         try { r.close(); } catch (IOException e) { }
       }
+    }
+  }
+  
+  /**
+   * Read the entire contents of a text from a {@link Reader}, returning it as a string.
+   * 
+   * @param reader A {@link Reader} containing interesting text.
+   * @return The text, as a string.
+   */
+  public static String readText(Reader reader) {
+    BufferedReader br = null;
+    try {
+      br = new BufferedReader(reader);
+      return br.lines().collect(Collectors.joining("\n"));
+    } finally {
+      if (br != null) { try { br.close(); } catch (Exception e) { } }
     }
   }
 

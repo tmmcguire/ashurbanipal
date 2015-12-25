@@ -61,7 +61,8 @@ public abstract class SentimentProcessor {
     switch (lang) {
       case "English":
         synchronized (SentimentProcessor.class) {
-          return new EnglishSentimentProcessor();
+          return new net.crsr.ashurbanipal.sentiment.lingpipe.EnglishSentimentProcessor();
+          // return new net.crsr.ashurbanipal.sentiment.stanford.EnglishSentimentProcessor();
         }
       default:
         System.out.println("unknown language: " + lang + " for " + file.getAbsolutePath());
