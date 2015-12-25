@@ -32,7 +32,7 @@ public class SentimentProcessorCallable implements Callable<SentimentResult> {
   
   @Override
   public SentimentResult call() throws Exception {
-    System.out.println("processing" + etext_no);
+    System.out.println("processing " + etext_no);
     FragmentingReader fragments = null;
     try {
       SentimentProcessor processor = threadProcessor.get().get(language);
