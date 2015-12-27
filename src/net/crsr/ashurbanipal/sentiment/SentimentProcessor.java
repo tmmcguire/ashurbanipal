@@ -15,15 +15,23 @@ public abstract class SentimentProcessor {
   protected int etext_no;
   protected final List<Double> scoresValues = new ArrayList<>();
   protected final List<Double> classesValues = new ArrayList<>();
+
+  public enum Processors {
+    // English
+    NRC,
+    BING,
+    AFINN,
+    LINGPIPE,
+    STANFORD,
+  }
   
   public abstract void process(Integer etextNo, Reader text);
-  
+
   public SentimentResult reduce() {
     final double[] scores = CollectionsUtilities.asArray(scoresValues, 2);
     final double[] classes = CollectionsUtilities.asArray(classesValues, 2);
-    final DoubleFFT_1D fft = new DoubleFFT_1D(scores.length);
-    fft.realForward(scores);
-    fft.realForward(classes);
+    new DoubleFFT_1D(scores.length).realForward(scores);
+    new DoubleFFT_1D(scores.length).realForward(classes);
     return new SentimentResult(etext_no, toComplexList(scores), toComplexList(classes));
   }
   
@@ -57,15 +65,22 @@ public abstract class SentimentProcessor {
     classesValues.clear();
   }
   
-  public static SentimentProcessor getProcessorFor(String lang, File file) {
+  public static SentimentProcessor getProcessorFor(String lang, Processors processor, File file) {
     switch (lang) {
       case "English":
         synchronized (SentimentProcessor.class) {
-          return new net.crsr.ashurbanipal.sentiment.nrc.EnglishSentimentProcessor();
-          // return new net.crsr.ashurbanipal.sentiment.bing.EnglishSentimentProcessor();
-          // return new net.crsr.ashurbanipal.sentiment.afinn.EnglishSentimentProcessor();
-          // return new net.crsr.ashurbanipal.sentiment.lingpipe.EnglishSentimentProcessor();
-          // return new net.crsr.ashurbanipal.sentiment.stanford.EnglishSentimentProcessor();
+          switch (processor) {
+            case NRC:
+              return new net.crsr.ashurbanipal.sentiment.nrc.EnglishSentimentProcessor();
+            case BING:
+              return new net.crsr.ashurbanipal.sentiment.bing.EnglishSentimentProcessor();
+            case AFINN:
+              return new net.crsr.ashurbanipal.sentiment.afinn.EnglishSentimentProcessor();
+            case LINGPIPE:
+              return new net.crsr.ashurbanipal.sentiment.lingpipe.EnglishSentimentProcessor();
+            case STANFORD:
+              return new net.crsr.ashurbanipal.sentiment.stanford.EnglishSentimentProcessor();
+          }
         }
       default:
         System.out.println("unknown language: " + lang + " for " + file.getAbsolutePath());

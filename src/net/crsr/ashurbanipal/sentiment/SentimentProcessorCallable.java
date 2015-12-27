@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import net.crsr.ashurbanipal.reader.FragmentingReader;
 import net.crsr.ashurbanipal.reader.GutenbergLicenseReader;
 import net.crsr.ashurbanipal.reader.ZippedTextFileReader;
+import net.crsr.ashurbanipal.sentiment.SentimentProcessor.Processors;
 
 public class SentimentProcessorCallable implements Callable<SentimentResult> {
 
@@ -23,11 +24,13 @@ public class SentimentProcessorCallable implements Callable<SentimentResult> {
   private final int etext_no;
   private final File file;
   private final String language;
+  private final Processors processor;
 
   public SentimentProcessorCallable(int etext_no, String language, File file) {
     this.etext_no = etext_no;
     this.file = file;
     this.language = language;
+    this.processor = Processors.LINGPIPE;
   }
   
   @Override
@@ -35,25 +38,25 @@ public class SentimentProcessorCallable implements Callable<SentimentResult> {
     System.out.println("processing " + etext_no);
     FragmentingReader fragments = null;
     try {
-      SentimentProcessor processor = threadProcessor.get().get(language);
+      SentimentProcessor sentimentProcessor = threadProcessor.get().get(language);
       Integer useCount = threadProcessorUseCount.get().get(language);
-      if (useCount == null || processor == null || useCount > 32) {
-        processor = SentimentProcessor.getProcessorFor(language, file);
-        if (processor == null) {
+      if (useCount == null || sentimentProcessor == null || useCount > 32) {
+        sentimentProcessor = SentimentProcessor.getProcessorFor(language, processor, file);
+        if (sentimentProcessor == null) {
           return null;
         }
-        threadProcessor.get().put(language, processor);
+        threadProcessor.get().put(language, sentimentProcessor);
         useCount = 0;
       }
       threadProcessorUseCount.get().put(language, useCount+1);
 
       // Process text in fragments, then coalesce data from fragments.
-      processor.clear(etext_no);
+      sentimentProcessor.clear(etext_no);
       fragments = new FragmentingReader(new GutenbergLicenseReader(new ZippedTextFileReader(file)), 10240);
       while (fragments.hasFragments()) {
-        processor.process(etext_no, fragments.nextFragment());
+        sentimentProcessor.process(etext_no, fragments.nextFragment());
       }
-      return processor.reduce();
+      return sentimentProcessor.reduce();
       
     } finally {
       if (fragments != null) { try { fragments.close(); } catch (Throwable t) { } }
