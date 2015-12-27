@@ -10,6 +10,7 @@ public class CollectionsUtilities {
 
   /**
    * Return the contents of the collection as an array of raw doubles, expanded in size.
+   * 
    * @param c A collection of n Doubles.
    * @param mult Append zeros to the collection until it has the next power of 2 above (c.length() * mult) entries.
    * @return An array of length >= (|c|*mult) of doubles, padded with zeros.

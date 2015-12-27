@@ -5,10 +5,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.crsr.ashurbanipal.utility.CollectionsUtilities;
 import net.crsr.ashurbanipal.utility.Complex;
-
-import org.jtransforms.fft.DoubleFFT_1D;
+import net.crsr.ashurbanipal.utility.FFT;
 
 public abstract class SentimentProcessor {
   
@@ -28,35 +26,9 @@ public abstract class SentimentProcessor {
   public abstract void process(Integer etextNo, Reader text);
 
   public SentimentResult reduce() {
-    final double[] scores = CollectionsUtilities.asArray(scoresValues, 2);
-    final double[] classes = CollectionsUtilities.asArray(classesValues, 2);
-    new DoubleFFT_1D(scores.length).realForward(scores);
-    new DoubleFFT_1D(scores.length).realForward(classes);
-    return new SentimentResult(etext_no, toComplexList(scores), toComplexList(classes));
-  }
-  
-  /**
-   * Convert an array of doubles in the format produced by {@link DoubleFFT_1D#realForward(double[])} into a list of Complex<Double>.
-   * 
-   * The format of the input array should be:
-   * <pre>
-   *  a[2*k]   = Re[k], 0<=k<n/2
-   *  a[2*k+1] = Im[k], 0<k<n/2
-   *  a[1]     = Re[n/2]
-   * </pre>
-   * 
-   * @param values Array of doubles, in the format produced by {@link DoubleFFT_1D#realForward(double[])}.
-   * @return List of Complex<Double>.
-   */
-  private List<Complex<Double>> toComplexList(double[] values) {
-    final List<Complex<Double>> result = new ArrayList<>();
-    final int boundary = values.length / 2;
-    result.add( new Complex<>(values[0], 0.0) );
-    for (int k = 1; k < boundary; ++k) {
-      result.add( new Complex<>(values[2*k], values[2*k + 1]) );
-    }
-    result.add( new Complex<>(values[boundary], 0.0) );
-    return result;
+    final List<Complex<Double>> scores = FFT.fft(scoresValues);
+    final List<Complex<Double>> classes = FFT.fft(classesValues);
+    return new SentimentResult(etext_no, scores, classes);
   }
   
   public void clear(int etext_no) {
