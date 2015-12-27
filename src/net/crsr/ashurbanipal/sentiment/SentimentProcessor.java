@@ -61,7 +61,8 @@ public abstract class SentimentProcessor {
     switch (lang) {
       case "English":
         synchronized (SentimentProcessor.class) {
-          return new net.crsr.ashurbanipal.sentiment.bing.EnglishSentimentProcessor();
+          return new net.crsr.ashurbanipal.sentiment.nrc.EnglishSentimentProcessor();
+          // return new net.crsr.ashurbanipal.sentiment.bing.EnglishSentimentProcessor();
           // return new net.crsr.ashurbanipal.sentiment.afinn.EnglishSentimentProcessor();
           // return new net.crsr.ashurbanipal.sentiment.lingpipe.EnglishSentimentProcessor();
           // return new net.crsr.ashurbanipal.sentiment.stanford.EnglishSentimentProcessor();
