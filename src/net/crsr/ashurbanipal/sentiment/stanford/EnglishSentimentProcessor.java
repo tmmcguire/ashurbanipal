@@ -1,10 +1,8 @@
 package net.crsr.ashurbanipal.sentiment.stanford;
 
-import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import net.crsr.ashurbanipal.sentiment.SentimentProcessor;
 import net.crsr.ashurbanipal.utility.IOUtilities;

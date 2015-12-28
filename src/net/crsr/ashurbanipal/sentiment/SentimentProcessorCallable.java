@@ -32,6 +32,13 @@ public class SentimentProcessorCallable implements Callable<SentimentResult> {
     this.language = language;
     this.processor = Processors.LINGPIPE;
   }
+
+  public SentimentProcessorCallable(int etext_no, String language, File file, Processors processor) {
+    this.etext_no = etext_no;
+    this.file = file;
+    this.language = language;
+    this.processor = processor;
+  }
   
   @Override
   public SentimentResult call() throws Exception {

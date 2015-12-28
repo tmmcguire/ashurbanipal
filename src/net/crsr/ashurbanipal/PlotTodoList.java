@@ -10,6 +10,8 @@ import java.util.concurrent.Callable;
 
 import net.crsr.ashurbanipal.pool.FileListWorkPool;
 import net.crsr.ashurbanipal.pool.ProcessorSupplier;
+import net.crsr.ashurbanipal.sentiment.SentimentProcessor;
+import net.crsr.ashurbanipal.sentiment.SentimentProcessor.Processors;
 import net.crsr.ashurbanipal.sentiment.SentimentProcessorCallable;
 import net.crsr.ashurbanipal.sentiment.SentimentResult;
 import net.crsr.ashurbanipal.store.PlotFrequencyStore;
@@ -28,6 +30,8 @@ public class PlotTodoList {
       final PlotFrequencyStore classes = new PlotFrequencyStore(args[3]);
       classes.read();
       classes.write();
+      
+      final Processors processor = (args.length == 5) ? SentimentProcessor.Processors.valueOf(args[4]) : Processors.LINGPIPE;
 
       final List<Triple<Integer,String,File>> todoList = IOUtilities.readTodoList(baseDirectory, todoListFile);
       
@@ -37,7 +41,7 @@ public class PlotTodoList {
         final int count = pool.submit(todoList, new ProcessorSupplier<SentimentResult>() {
           @Override
           public Callable<SentimentResult> getProcessor(Integer etext_no, String language, File file) {
-            return new SentimentProcessorCallable(etext_no, language, file);
+            return new SentimentProcessorCallable(etext_no, language, file, processor);
           }
         });
 
@@ -69,9 +73,7 @@ public class PlotTodoList {
     try {
 
       final SentimentResult sentimentResult = pool.getResult();
-      if (sentimentResult == null) {
-        return;
-      } else {
+      if (sentimentResult != null) {
         scores.append(sentimentResult.etext_no, sentimentResult.scores);
         classes.append(sentimentResult.etext_no, sentimentResult.classes);
       }
