@@ -38,12 +38,12 @@ public class EnglishSentimentProcessor extends SentimentProcessor {
   public void process(Integer etextNo, Reader text) {
     for (String sentence : new EnglishSentenceIterator( IOUtilities.readText(text)) ) {
       final JointClassification classification = classifier.classify(sentence);
-      double score = 0.0;
+      double score = -2.0;
       for (int i = 0; i < categories.size(); ++i) {
         score += (i + 1) * classification.conditionalProbability( categories.get(i) );
       }
       // 1 <= score <= categories.size()
-      scoresValues.add(score - 2.0);
+      scoresValues.add(score);
       switch (classification.bestCategory()) {
         case "neg":
           classesValues.add(-1.0);
