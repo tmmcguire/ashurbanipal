@@ -12,7 +12,6 @@ import net.crsr.ashurbanipal.utility.FFT;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -24,18 +23,22 @@ public class PlotSentimentGraph {
       metadataStore.read();
       final int etextNo = Integer.parseInt(args[1]);
 
-      final String filename = args[2];
-      final PlotFrequencyStore frequencyStore = new PlotFrequencyStore(filename);
-      frequencyStore.read();
-      
-      List<Double> data = FFT.inverseFFT( frequencyStore.get(etextNo), 100 );
-      
-      final XYSeries dataSeries = new XYSeries(filename);
-      for (int i = 0; i < data.size(); ++i) {
-        dataSeries.add(i, data.get(i));
+      final XYSeriesCollection dataset = new XYSeriesCollection();
+      for (int i = 2; i < args.length; ++i) {
+        final String filename = args[i];
+        final PlotFrequencyStore frequencyStore = new PlotFrequencyStore(filename);
+        frequencyStore.read();
+
+        final List<Double> data = FFT.inverseFFT( frequencyStore.get(etextNo), 100, 3 );
+
+        final XYSeries dataSeries = new XYSeries(new File(filename).getParentFile().getName());
+        for (int j = 0; j < data.size(); ++j) {
+          dataSeries.add(j, data.get(j));
+        }
+        dataset.addSeries(dataSeries);
       }
-      final XYDataset dataset = new XYSeriesCollection(dataSeries);
-      JFreeChart chart = ChartFactory.createXYLineChart(filename, "Time", "Valence", dataset);
+      
+      JFreeChart chart = ChartFactory.createXYLineChart(metadataStore.get(etextNo).get("title").get(0), "Time", "Valence", dataset);
       ChartUtilities.saveChartAsPNG(new File("1.png"), chart, 600, 300);
       
     } catch (ArrayIndexOutOfBoundsException e) {
