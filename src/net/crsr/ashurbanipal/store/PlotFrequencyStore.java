@@ -70,7 +70,7 @@ public class PlotFrequencyStore extends AbstractFileStore implements Map<Integer
   }
   
   public void append(Integer etextNo, List<Complex<Double>> data) throws IOException {
-    List<Complex<Double>> keptData = data.subList(0, Math.min(this.setSize, data.size()));
+    List<Complex<Double>> keptData = data.subList(0, setSize != 0 ? Math.min(setSize, data.size()) : data.size());
     store.put(etextNo, keptData);
     final StringBuilder sb = new StringBuilder();
     this.formatEntry(sb, etextNo, keptData);
