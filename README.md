@@ -43,6 +43,16 @@ information includes:
   web services. (This approach may be changed at some point; it
   consumes a great deal of memory and is slower than other suggested
   approaches.)
+  
+* Sentiment-over-time data about each text, following the lead of
+  [Matthew Jockers'](http://www.matthewjockers.net/)
+  [Syuzhet](http://www.matthewjockers.net/2015/02/02/syuzhet/) package
+  (available from github as
+  [mjockers/syuzhet](https://github.com/mjockers/syuzhet)).
+  
+  Ashurbanipal collects a sentiment score associated with each sentence in the
+  text, in order, performs a FFT on that data, and then records the
+  low-frequencies of the data to get an idea of the overall "plot" of the text.
 
 If you are interested in a starting point in the code, likely the best
 would be the [TagTodoList.java program][1], used to produce the raw
@@ -56,6 +66,12 @@ than the other likely candidate, the
 seems to be faster and to use less memory and it is unclear if the
 accuracy difference is important. As well, the Stanford POS Tagger
 likes to blow up on large texts.
+
+Unfortunately, the Stanford
+[CoreNLP](http://stanfordnlp.github.io/CoreNLP/index.html) sentiment annotator
+seems to be drastically too slow to use on this data set. The current
+alternatives are [LingPipe](http://alias-i.com/lingpipe/) and dictionary look-up
+based approaches from the Syuzhet package. (LingPipe doesn't currently work.)
 
 In order to handle the last problem, each text is broken into smaller
 chunks on paragraph boundaries (or, at least, empty lines) and the
