@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import net.crsr.ashurbanipal.store.MetadataStore;
 import net.crsr.ashurbanipal.store.PlotFrequencyStore;
 import net.crsr.ashurbanipal.utility.Complex;
+import net.crsr.ashurbanipal.utility.FFT;
 import net.crsr.ashurbanipal.utility.Pair;
 
 public class PlotSentimentLookup {
@@ -27,7 +28,7 @@ public class PlotSentimentLookup {
       final PlotFrequencyStore frequencyStore = new PlotFrequencyStore(args[1]);
       frequencyStore.read();
       
-      final List<Complex<Double>> match = frequencyStore.get(etextNo);
+      final List<Complex> match = frequencyStore.get(etextNo);
       printHeader();
       printMetadata(metadataStore.get(etextNo));
       for (Pair<Double,Integer> neighbors : nearestNeighbors(frequencyStore, match)) {
@@ -42,13 +43,12 @@ public class PlotSentimentLookup {
     } catch (IOException e) {
       throw new IOError(e);
     }
-
   }
 
-  public static List<Pair<Double,Integer>> nearestNeighbors(PlotFrequencyStore posStore, List<Complex<Double>> initial) {
+  public static List<Pair<Double,Integer>> nearestNeighbors(PlotFrequencyStore posStore, List<Complex> initial) {
     final List<Pair<Double,Integer>> results = new ArrayList<>();
-    for (Entry<Integer,List<Complex<Double>>> entry : posStore.entrySet()) {
-      final List<Complex<Double>> comparison = entry.getValue();
+    for (Entry<Integer,List<Complex>> entry : posStore.entrySet()) {
+      final List<Complex> comparison = entry.getValue();
       if (comparison.size() > 15 && hasData(comparison)) {
         results.add(Pair.pair(computeDistance(initial, comparison), entry.getKey()));
       }
@@ -56,28 +56,21 @@ public class PlotSentimentLookup {
     results.sort(new Comparator<Pair<Double,Integer>>() {
       @Override
       public int compare(Pair<Double,Integer> left, Pair<Double,Integer> right) {
-        return Double.compare(left.l, right.l);
+        return -Double.compare(left.l, right.l);
       }
     });
     return results;
   }
   
-  public static boolean hasData(List<Complex<Double>> list) {
-    for (Complex<Double> d : list) {
+  public static boolean hasData(List<Complex> list) {
+    for (Complex d : list) {
       if (d.real != 0.0 || d.imag != 0.0) { return true; }
     }
     return false;
   }
 
-  public static double computeDistance(List<Complex<Double>> left, List<Complex<Double>> right) {
-    double distance = 0.0;
-    final int length = Math.min(left.size(), right.size());
-    for (int i = 1; i < length; ++i) {
-      final Complex<Double> l = left.get(i);
-      final Complex<Double> r = right.get(i);
-      distance += l.distance(r) * Math.pow(0.9, i);
-    }
-    return distance;
+  public static double computeDistance(List<Complex> left, List<Complex> right) {
+    return FFT.cosineSimilarity(left, right);
   }
 
 }

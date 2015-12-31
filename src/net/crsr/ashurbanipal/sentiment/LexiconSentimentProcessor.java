@@ -36,16 +36,14 @@ public abstract class LexiconSentimentProcessor extends SentimentProcessor {
   @Override
   public void process(Integer etextNo, Reader text) {
     for (String sentence : new EnglishSentenceIterator( IOUtilities.readText(text)) ) {
-      int count = 0;
       double score = 0.0;
       for (String word : sentence.split(" +")) {
-        count += 1;
         score += lexicon.getOrDefault(word, 0.0);
       }
       scoresValues.add(score);
-      if (score/count < -1) {
+      if (score < 0) {
         classesValues.add(-1.0);
-      } else if (score/count > 1) {
+      } else if (score > 0) {
         classesValues.add(1.0);
       } else {
         classesValues.add(0.0);

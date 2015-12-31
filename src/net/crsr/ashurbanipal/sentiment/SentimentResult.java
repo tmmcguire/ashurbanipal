@@ -7,10 +7,10 @@ import net.crsr.ashurbanipal.utility.Complex;
 public class SentimentResult {
 
   public final int etext_no;
-  public final List<Complex<Double>> scores;
-  public final List<Complex<Double>> classes;
+  public final List<Complex> scores;
+  public final List<Complex> classes;
   
-  public SentimentResult(int etext_no, List<Complex<Double>> scores, List<Complex<Double>> classes) {
+  public SentimentResult(int etext_no, List<Complex> scores, List<Complex> classes) {
     this.etext_no = etext_no;
     this.scores = scores;
     this.classes = classes;

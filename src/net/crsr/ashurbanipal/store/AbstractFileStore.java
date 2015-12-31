@@ -130,4 +130,8 @@ abstract public class AbstractFileStore {
       }
     }
   }
+  
+  public File file() {
+    return this.file;
+  }
 }

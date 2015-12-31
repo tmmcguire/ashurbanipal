@@ -24,14 +24,14 @@ public class PlotTodoList {
     try {
       final String todoListFile = args[0];
       final String baseDirectory = args[1];
-      final PlotFrequencyStore scores = new PlotFrequencyStore(args[2]);
+      final PlotFrequencyStore scores = new PlotFrequencyStore(args[2],0);
       scores.read();
       scores.write();
-      final PlotFrequencyStore classes = new PlotFrequencyStore(args[3]);
+      final PlotFrequencyStore classes = new PlotFrequencyStore(args[3],0);
       classes.read();
       classes.write();
       
-      final Processors processor = (args.length == 5) ? SentimentProcessor.Processors.valueOf(args[4]) : Processors.LINGPIPE;
+      final Processors processor = (args.length == 5) ? SentimentProcessor.Processors.valueOf(args[4]) : Processors.BING;
 
       final List<Triple<Integer,String,File>> todoList = IOUtilities.readTodoList(baseDirectory, todoListFile);
       

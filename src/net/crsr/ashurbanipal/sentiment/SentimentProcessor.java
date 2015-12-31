@@ -26,8 +26,8 @@ public abstract class SentimentProcessor {
   public abstract void process(Integer etextNo, Reader text);
 
   public SentimentResult reduce() {
-    final List<Complex<Double>> scores = FFT.fft(scoresValues);
-    final List<Complex<Double>> classes = FFT.fft(classesValues);
+    final List<Complex> scores = FFT.fft(scoresValues);
+    final List<Complex> classes = FFT.fft(classesValues);
     return new SentimentResult(etext_no, scores, classes);
   }
   

@@ -15,7 +15,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class PlotSentimentGraph {
+public class PlotSentimentGraphForSentimentProcessors {
 
   public static void main(String[] args) {
     try {
