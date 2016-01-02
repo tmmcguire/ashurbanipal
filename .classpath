@@ -16,7 +16,6 @@
 	<classpathentry kind="lib" path="lib/lingpipe-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar"/>
-	<classpathentry kind="lib" path="lib/jfreesvg-2.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/stanford-postagger-3.5.1.jar" sourcepath="/home/mcguire/tmp/gutenberg/dvd/stanford/stanford-postagger-full-2015-01-30/stanford-postagger-3.5.1-sources.jar">
 		<attributes>
