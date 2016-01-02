@@ -31,7 +31,7 @@ public class TopicLookup {
 
       printHeader();
       printMetadata(metadataStore.get(etextNo));
-      for (Pair<Double,Integer> neighbors : nearestNeighbors(nounStore, nounStore.get(etextNo))) {
+      for (Pair<Double,Integer> neighbors : nearestNeighbors(nounStore, etextNo)) {
         if (neighbors.r != etextNo) {
           printMetadata(neighbors.l, metadataStore.get(neighbors.r));
         }
@@ -45,9 +45,9 @@ public class TopicLookup {
     }
   }
 
-  public static List<Pair<Double,Integer>> nearestNeighbors(WordStore posStore, Map<String,Integer> initial) {
+  public static List<Pair<Double,Integer>> nearestNeighbors(WordStore posStore, int etextNo) {
+    final Map<String,Integer> initial = posStore.get(etextNo);
     final List<Pair<Double,Integer>> results = new ArrayList<>();
-
     for (Entry<Integer,Map<String,Integer>> entry : posStore.entrySet()) {
       results.add(Pair.pair(computeDistance(initial, entry.getValue()), entry.getKey()));
     }

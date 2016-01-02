@@ -33,12 +33,9 @@ public class CombinedLookup {
       final PosStore posStore = new PosStore(args[2]);
       posStore.read();
 
-      Map<String,Double> pos = posStore.get(etextNo);
-      Map<String,Integer> nouns = nounStore.get(etextNo);
-
       printHeader();
       printMetadata(metadata);
-      for (Pair<Double,Integer> neighbors : nearestNeighbors(posStore, nounStore, pos, nouns)) {
+      for (Pair<Double,Integer> neighbors : nearestNeighbors(posStore, nounStore, etextNo)) {
         if (neighbors.r != etextNo) {
           printMetadata(neighbors.l, metadataStore.get(neighbors.r));
         }
@@ -52,13 +49,13 @@ public class CombinedLookup {
     }
   }
 
-  public static List<Pair<Double,Integer>> nearestNeighbors(PosStore posStore, WordStore nounStore, Map<String,Double> pos, Map<String,Integer> nouns) {
+  public static List<Pair<Double,Integer>> nearestNeighbors(PosStore posStore, WordStore nounStore, int etextNo) {
     final Map<Integer,Double> style = new HashMap<>();
-    for (Pair<Double,Integer> elt : StyleLookup.nearestNeighbors(posStore, pos)) {
+    for (Pair<Double,Integer> elt : StyleLookup.nearestNeighbors(posStore, etextNo)) {
       style.put(elt.r, elt.l);
     }
     final List<Pair<Double,Integer>> results = new ArrayList<>();
-    final List<Pair<Double,Integer>> topic = TopicLookup.nearestNeighbors(nounStore, nouns);
+    final List<Pair<Double,Integer>> topic = TopicLookup.nearestNeighbors(nounStore, etextNo);
     for (Pair<Double,Integer> elt : topic) {
       final Double styleDistance = style.get(elt.r);
       if (styleDistance != null) {

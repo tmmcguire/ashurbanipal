@@ -28,10 +28,9 @@ public class PlotSentimentLookup {
       final PlotFrequencyStore frequencyStore = new PlotFrequencyStore(args[1]);
       frequencyStore.read();
       
-      final List<Complex> match = frequencyStore.get(etextNo);
       printHeader();
       printMetadata(metadataStore.get(etextNo));
-      for (Pair<Double,Integer> neighbors : nearestNeighbors(frequencyStore, match)) {
+      for (Pair<Double,Integer> neighbors : nearestNeighbors(frequencyStore, etextNo)) {
         if (neighbors.r != etextNo) {
           printMetadata(neighbors.l, metadataStore.get(neighbors.r));
         }
@@ -45,9 +44,10 @@ public class PlotSentimentLookup {
     }
   }
 
-  public static List<Pair<Double,Integer>> nearestNeighbors(PlotFrequencyStore posStore, List<Complex> initial) {
+  public static List<Pair<Double,Integer>> nearestNeighbors(PlotFrequencyStore frequencyStore, int etextNo) {
+    final List<Complex> initial = frequencyStore.get(etextNo);
     final List<Pair<Double,Integer>> results = new ArrayList<>();
-    for (Entry<Integer,List<Complex>> entry : posStore.entrySet()) {
+    for (Entry<Integer,List<Complex>> entry : frequencyStore.entrySet()) {
       final List<Complex> comparison = entry.getValue();
       if (initial != null && comparison != null && comparison.size() > 15 && hasData(comparison)) {
         results.add(Pair.pair(computeDistance(initial, comparison), entry.getKey()));

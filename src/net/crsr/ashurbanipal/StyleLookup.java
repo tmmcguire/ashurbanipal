@@ -27,10 +27,9 @@ public class StyleLookup {
       final PosStore posStore = new PosStore(args[2]);
       posStore.read();
       
-      final Map<String,Double> match = posStore.get(etextNo);
       printHeader();
       printMetadata(metadataStore.get(etextNo));
-      for (Pair<Double,Integer> neighbors : nearestNeighbors(posStore, match)) {
+      for (Pair<Double,Integer> neighbors : nearestNeighbors(posStore, etextNo)) {
         if (neighbors.r != etextNo) {
           printMetadata(neighbors.l, metadataStore.get(neighbors.r));
         }
@@ -45,7 +44,8 @@ public class StyleLookup {
 
   }
 
-  public static List<Pair<Double,Integer>> nearestNeighbors(PosStore posStore, Map<String,Double> initial) {
+  public static List<Pair<Double,Integer>> nearestNeighbors(PosStore posStore, int etextNo) {
+    final Map<String,Double> initial = posStore.get(etextNo);
     final List<Pair<Double,Integer>> results = new ArrayList<>();
     for (Entry<Integer,Map<String,Double>> entry : posStore.entrySet()) {
       results.add(Pair.pair(computeDistance(initial, entry.getValue()), entry.getKey()));
