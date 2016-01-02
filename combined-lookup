@@ -2,4 +2,4 @@ JAVA_HOME=$HOME/soft/jdk1.8.0_31
 
 PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
 
-java -server $PROPS -cp bin net.crsr.ashurbanipal.CombinedLookup gutenberg2010.metadata gutenberg2010.nouns gutenberg2010.pos "$@"
+java -server $PROPS -cp lib/JTransforms-3.1-with-dependencies.jar:bin net.crsr.ashurbanipal.CombinedLookup gutenberg2010.metadata gutenberg2010.nouns gutenberg2010.pos gutenberg2010.BING-scores "$@"
