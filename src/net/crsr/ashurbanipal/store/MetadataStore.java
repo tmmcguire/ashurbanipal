@@ -49,7 +49,7 @@ public class MetadataStore extends AbstractFileStore implements Map<Integer,Map<
       final String[] values = line.split("\\t");
       final Map<String,List<String>> data = new HashMap<>();
       for (int i = 0; i < values.length; ++i) {
-        data.put(columns.get(i), unescapeOnSemicolon(values[i]));
+        data.put(i < columns.size() ? columns.get(i) : "unknown-column", unescapeOnSemicolon(values[i]));
       }
       metadataTable.put(getEtextNumber(data), data);
       line = r.readLine();
