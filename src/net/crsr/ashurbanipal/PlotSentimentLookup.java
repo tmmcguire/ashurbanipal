@@ -49,7 +49,7 @@ public class PlotSentimentLookup {
     final List<Pair<Double,Integer>> results = new ArrayList<>();
     for (Entry<Integer,List<Complex>> entry : posStore.entrySet()) {
       final List<Complex> comparison = entry.getValue();
-      if (comparison.size() > 15 && hasData(comparison)) {
+      if (initial != null && comparison != null && comparison.size() > 15 && hasData(comparison)) {
         results.add(Pair.pair(computeDistance(initial, comparison), entry.getKey()));
       }
     }
