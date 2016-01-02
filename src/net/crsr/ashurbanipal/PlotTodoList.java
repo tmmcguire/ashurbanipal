@@ -24,10 +24,10 @@ public class PlotTodoList {
     try {
       final String todoListFile = args[0];
       final String baseDirectory = args[1];
-      final PlotFrequencyStore scores = new PlotFrequencyStore(args[2],0);
+      final PlotFrequencyStore scores = new PlotFrequencyStore(args[2]);
       scores.read();
       scores.write();
-      final PlotFrequencyStore classes = new PlotFrequencyStore(args[3],0);
+      final PlotFrequencyStore classes = new PlotFrequencyStore(args[3]);
       classes.read();
       classes.write();
       
