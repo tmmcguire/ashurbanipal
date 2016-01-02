@@ -4,4 +4,4 @@ PATH=$HOME/soft/jdk1.8.0_31/bin/:$PATH
 
 CP="lib/JTransforms-3.1-with-dependencies.jar:lib/jcommon-1.0.23.jar:lib/jfreechart-1.0.19.jar"
 
-java -server $PROPS -cp $CP:bin net.crsr.ashurbanipal.PlotSentimentGraphForSentimentProcessors "$@"
+java -server $PROPS -cp $CP:bin net.crsr.ashurbanipal.graphics.PlotSentimentGraphForSentimentProcessors "$@"

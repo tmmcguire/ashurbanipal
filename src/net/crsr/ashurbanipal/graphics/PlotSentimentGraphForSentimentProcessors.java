@@ -1,4 +1,4 @@
-package net.crsr.ashurbanipal;
+package net.crsr.ashurbanipal.graphics;
 
 import java.io.File;
 import java.io.IOError;
