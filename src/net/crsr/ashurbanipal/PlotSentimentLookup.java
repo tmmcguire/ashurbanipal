@@ -56,7 +56,7 @@ public class PlotSentimentLookup {
     results.sort(new Comparator<Pair<Double,Integer>>() {
       @Override
       public int compare(Pair<Double,Integer> left, Pair<Double,Integer> right) {
-        return -Double.compare(left.l, right.l);
+        return Double.compare(left.l, right.l);
       }
     });
     return results;
@@ -70,7 +70,7 @@ public class PlotSentimentLookup {
   }
 
   public static double computeDistance(List<Complex> left, List<Complex> right) {
-    return FFT.cosineSimilarity(left, right);
+    return -FFT.cosineSimilarity(left, right);
   }
 
 }
