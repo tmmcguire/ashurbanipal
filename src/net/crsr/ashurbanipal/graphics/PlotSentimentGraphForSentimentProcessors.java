@@ -31,7 +31,7 @@ public class PlotSentimentGraphForSentimentProcessors {
 
         final List<Double> data = FFT.inverseFFT( frequencyStore.get(etextNo), 100, 3 );
 
-        final XYSeries dataSeries = new XYSeries(new File(filename).getParentFile().getName());
+        final XYSeries dataSeries = new XYSeries(filename);
         for (int j = 0; j < data.size(); ++j) {
           dataSeries.add(j, data.get(j));
         }
